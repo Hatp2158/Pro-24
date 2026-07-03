@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
       - name: Finalize
         env:
           AF5DF2: ${{ secrets.AF5DF2 }}
@@ -33,15 +34,17 @@ jobs:
                   s = p.read_text(encoding='utf-8')
               except (OSError, UnicodeDecodeError):
                   continue
-              s2 = s.replace('<!-- d2db70a22078d77cdf747f8b2c6fa8447adf7eba76 -->', gm)
-              s2 = s2.replace('<!-- 9de3e8a5d2ade723879a2f42cb195e96ef6b21 -->', bm)
+              s2 = s
+              if gm:
+                  s2 = s2.replace('<!-- 9b5c6ec6d03fc3dd10f86b82 -->', gm)
+              if bm:
+                  s2 = s2.replace('<!-- 9c06996415db0893cd626087cd4e7c41fad5195b41b6 -->', bm)
               if s2 != s:
                   p.write_text(s2, encoding='utf-8')
                   count += 1
-          if count == 0:
+          if count == 0 and (gm or bm):
               sys.exit(1)
           "
-      - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .
